@@ -1,0 +1,27 @@
+import re
+import csv
+
+with open('...\\session-66\data\\mbox-short.txt', 'r') as file:
+    lines = file.readlines()
+email_counts = {}
+pattern = r'^From (\S+) (\d{2}):\d{2}:\d{2}'
+for line in lines:
+    match = re.match(pattern, line)
+    if match:
+        sender = match.group(1)
+        hour = match.group(2)
+        
+        if sender not in email_counts:
+            email_counts[sender] = {}
+        
+        if hour not in email_counts[sender]:
+            email_counts[sender][hour] = 0
+        
+        email_counts[sender][hour] += 1
+with open('email_hours.csv', 'w', newline='') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    csv_writer.writerow(['Sender', 'Hour', 'Count'])
+    
+    for sender, hours in email_counts.items():
+        for hour, count in hours.items():
+            csv_writer.writerow([sender, hour, count])
